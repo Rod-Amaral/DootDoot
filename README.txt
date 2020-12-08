@@ -21,7 +21,6 @@ make clean
 
 
 /*		How to Build 		*/
-
 for a video tutorial (until the 12 minute mark) to how to get MinGW gcc and the SDL2 library files you can follow this tutorial:
 https://youtu.be/UvJt9MZs_M8
 
