@@ -14,13 +14,13 @@ make clean
 
 
 /*		Build Requirements		*/
-- MinGW gcc compiler
+- gcc compiler 
 - make (mingw32-make will do)
 - SDL2 and SDL2_mixer
 
 
 
-/*		How to Build 		*/
+/*		How to Build on Windows 		*/
 for a video tutorial (until the 12 minute mark) to how to get MinGW gcc and the SDL2 library files you can follow this tutorial:
 https://youtu.be/UvJt9MZs_M8
 
@@ -50,3 +50,13 @@ Inside the i686-w64-mingw32 folders, the bin, include, lib an share folders cont
 For both the SDL and SDL mixer i686-w64-mingw32 folders, select and copy all these folders (bin include lib share folders), and paste them in the C:\MinGW folder.
 
 The C:\MinGW folder contains its own (bin include lib and share) folders, and we are placing the files needed to compile with SDL2 and SDL2 mixer functionalities using MinGW gcc compiler.
+
+
+
+/*		How to build on GNU/Linux 		*/
+Depending on your distro, find out how to download SDL2 and SDL2_mixer libraries from the apt-repository of your distro
+
+If you need more help checkout this link for SDL2 installation:
+https://wiki.libsdl.org/Installation
+
+just run make afterwards
