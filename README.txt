@@ -60,3 +60,7 @@ If you need more help checkout this link for SDL2 installation:
 https://wiki.libsdl.org/Installation
 
 just run make afterwards
+
+
+/*		Media Files 		*/
+You must include the media files in the same directory as the executable file or inside a media folder inside the directory where the executable is present.
