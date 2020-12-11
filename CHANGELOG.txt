@@ -1,5 +1,9 @@
-V1.0.4:
-
-	- Created functions for Initialization
-	- Program will now look for media files in the same directory as the executbale, the media directory in the same directory and the media directory on a previous directory
-	- Now using pthread to use parallel processing for the window.
+V1.1.0:
+	
+	- Using SDL_thread for paraller processing instead of pthread (and doing it properly this time)
+	- _rodDoot_ThreadFuns.c now includes functions to be used on threads
+	- Window can now be closed
+	- Window now responds to events and is responsive
+	- Window can be closed with the End key
+	- Window has an icon now
+	- Now usign textures to draw on Window

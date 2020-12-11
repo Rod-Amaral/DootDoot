@@ -1,5 +1,8 @@
 Application: Simple program to play a sound file (pseudo) randomly with a minimum and maximum delay using SDL2
 
+/*		Settings 		*/
+The defines on _rodDoot_DootDoot.h in the src/ folder are used for the settings of the program
+
 
 /*		Makefile		*/
 To build executable for windows use:
@@ -39,6 +42,8 @@ https://www.libsdl.org/projects/SDL_mixer/
 
 MinGW download link (if you need it):
 https://osdn.net/projects/mingw/releases/68260
+
+Once SDL2 and SDL2 library files are present, run make windows
 
 
 /*		How to include the library files for SDL2 and SDL2_mixer in MinGW gcc		*/
