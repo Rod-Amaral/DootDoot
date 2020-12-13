@@ -1,9 +1,3 @@
-V1.1.0:
+V1.1.1:
 	
-	- Using SDL_thread for paraller processing instead of pthread (and doing it properly this time)
-	- _rodDoot_ThreadFuns.c now includes functions to be used on threads
-	- Window can now be closed
-	- Window now responds to events and is responsive
-	- Window can be closed with the End key
-	- Window has an icon now
-	- Now usign textures to draw on Window
+	- No longer using SDL mixer for audio

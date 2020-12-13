@@ -1,6 +1,6 @@
 #include "_rodDoot_DootDoot.h"
 
-void _rodDoot_Window_wImage_Init(_rodDoot_Window_wImage* MainWindow)
+void _rodDoot_Window_wImage_Default(_rodDoot_Window_wImage* MainWindow)
 {
 	MainWindow->Window = NULL;
 	MainWindow->ImageSurface = NULL;
@@ -9,47 +9,62 @@ void _rodDoot_Window_wImage_Init(_rodDoot_Window_wImage* MainWindow)
 	MainWindow->Renderer = NULL;
 }
 
-Uint8 _rodDoot_Init(_rodDoot_Window_wImage* MainWindow, Mix_Chunk** Sound)
+void _rodDoot_SoundAndDevice_Default(_rodDoot_SoundAndDevice* SD)
 {
-	/* Timer */
-	if(SDL_Init(SDL_INIT_TIMER))
+	SD->Audio.Buffer = NULL;
+	SD->Audio.Length = NULL;
+	SD->WavBuffer = NULL;
+	SD->WavLength = 0;
+}
+
+Uint8 _rodDoot_Init(_rodDoot_Window_wImage* MainWindow, _rodDoot_SoundAndDevice* SD)
+{
+	/* Audio */
+	if(SDL_Init(SDL_INIT_AUDIO)) 
 	{
-		fprintf(stderr, "Unable to initialize SDL Timer: %s", SDL_GetError());
+        fprintf(stderr, "Unable to initialize SDL Audio: %s\n", SDL_GetError());
+        return 1;
+    }
+
+	/* Timer */
+	if(SDL_InitSubSystem(SDL_INIT_TIMER))
+	{
+		fprintf(stderr, "Unable to initialize SDL Timer: %s\n", SDL_GetError());
         return 1;
 	}
+    
+    /* Load Doot Doot Sound */
+	SDL_AudioSpec* TempSpec = NULL;
 
-    /* Audio */
-	if (SDL_Init(SDL_INIT_AUDIO)) 
-	{
-        fprintf(stderr, "Unable to initialize SDL Audio: %s", SDL_GetError());
-        return 1;
-    }
-    else
+    TempSpec = SDL_LoadWAV("doot_doot.wav", &(SD->WavSpec), &(SD->WavBuffer), &(SD->WavLength));
+
+    if(TempSpec == NULL)
+    	TempSpec = SDL_LoadWAV("media/doot_doot.wav", &(SD->WavSpec), &(SD->WavBuffer), &(SD->WavLength));
+
+    if(TempSpec == NULL)
+    	TempSpec = SDL_LoadWAV("../doot_doot.wav", &(SD->WavSpec), &(SD->WavBuffer), &(SD->WavLength));
+
+    if(TempSpec == NULL)
+    	TempSpec = SDL_LoadWAV("../media/doot_doot.wav", &(SD->WavSpec), &(SD->WavBuffer), &(SD->WavLength));
+
+    if(TempSpec == NULL)
     {
-        /* SDL Mixer init */
-        if(Mix_OpenAudio( 22050 , MIX_DEFAULT_FORMAT, 2, 2048 ) < 0)
-        {
-            fprintf(stderr, "SDL_mixer could not be initialized! SDL Mixer Error: %s\n", Mix_GetError());
-            return 1;
-        }
-        else
-        {
-            /* Load Doot Doot Sound */
-            *Sound = Mix_LoadWAV("../media/doot_doot.wav");
-
-            if(*Sound == NULL)
-            	*Sound = Mix_LoadWAV("media/doot_doot.wav");
-
-            if(*Sound == NULL)
-            	*Sound = Mix_LoadWAV("doot_doot.wav");
-
-            if(*Sound == NULL)
-            {
-                fprintf(stderr, "Doot Doot sound affect could not be loaded! SDL Mixer Error: %s\n", Mix_GetError());
-                return 1;
-            }
-        }
+        fprintf(stderr, "Could not open Audio File! SDL Error: %s\n", SDL_GetError());
+		return 1;
     }
+
+    SD->Audio.Length = SD->WavLength;
+	SD->Audio.Buffer = SD->WavBuffer;
+	SD->WavSpec.callback = _rodDoot_AudioCallback;
+	SD->WavSpec.userdata = &(SD->Audio);
+
+	SD->AudioDevice = SDL_OpenAudioDevice(NULL, 0, &(SD->WavSpec), NULL, SDL_AUDIO_ALLOW_ANY_CHANGE);
+
+	if(SD->AudioDevice == 0)
+	{
+		fprintf(stderr, "Could not open Audio Device! SDL Error: %s\n", SDL_GetError());
+		return 1;
+	}
 
     #ifdef _TERMINAL_
         #ifdef _BOGGED_
@@ -72,7 +87,7 @@ Uint8 _rodDoot_Init(_rodDoot_Window_wImage* MainWindow, Mix_Chunk** Sound)
         	#endif
 
         if(file == NULL)
-            fprintf(stderr, "Couldn't open bogged file!");
+            fprintf(stderr, "Couldn't open bogged file!\n");
 
         long long int char_limit, char_count;
         char_limit = 10000;
@@ -91,7 +106,7 @@ Uint8 _rodDoot_Init(_rodDoot_Window_wImage* MainWindow, Mix_Chunk** Sound)
         #endif
     #else
 	    /* Video Init */
-	    if(SDL_Init(SDL_INIT_VIDEO))
+	    if(SDL_InitSubSystem(SDL_INIT_VIDEO))
 	    {
 	        fprintf(stderr, "Unable to initialize SDL Video: %s\n", SDL_GetError() );
 	        return 1;
@@ -142,7 +157,7 @@ Uint8 _rodDoot_Init(_rodDoot_Window_wImage* MainWindow, Mix_Chunk** Sound)
     return 0;
 }
 
-void _rodDoot_Close(_rodDoot_Window_wImage* MainWindow, Mix_Chunk** Sound)
+void _rodDoot_Close(_rodDoot_Window_wImage* MainWindow, _rodDoot_SoundAndDevice* SD)
 {
 	#ifdef _DEBUG_
 	fprintf(stderr, "Destroying Window\n");
@@ -179,9 +194,9 @@ void _rodDoot_Close(_rodDoot_Window_wImage* MainWindow, Mix_Chunk** Sound)
 	#ifdef _DEBUG_ 
 	fprintf(stderr, "Destroying Sound\n");
 	#endif
-    Mix_FreeChunk(*Sound);
-    *Sound = NULL;
+    SDL_FreeWAV(SD->WavBuffer);
+    SD->WavBuffer = NULL;
+	SDL_CloseAudioDevice(SD->AudioDevice);
 
-    Mix_Quit();
     SDL_Quit();
 }

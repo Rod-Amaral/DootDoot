@@ -12,7 +12,6 @@
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_thread.h>
 #include <SDL2/SDL_mutex.h>
-#include <SDL2/SDL_mixer.h>
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
     #include <Windows.h>
@@ -25,7 +24,7 @@
 #define WINDOW_Y 150
 
 /* These set the maximum and minimum delay of a Doot Doot */
-#define MAX_DELAY 6   /* in seconds */
+#define MAX_DELAY 10   /* in seconds */
 #define MIN_DELAY 5    /* in seconds */
 
 /* comment out defines to change settings */
@@ -49,12 +48,32 @@ typedef struct Window_wImage
 } _rodDoot_Window_wImage;
 
 
+typedef struct structAudioData
+{
+	Uint8* Buffer;
+	Uint32 Length;
+}_rodDoot_AudioData;
+
+
+typedef struct structSoundAndDevice
+{
+	_rodDoot_AudioData Audio;
+
+	Uint8* WavBuffer;
+	Uint32 WavLength;
+	SDL_AudioSpec WavSpec;
+	SDL_AudioDeviceID AudioDevice;
+}_rodDoot_SoundAndDevice;
+
 /* Init Functions */
 extern void _rodDoot_Window_wImage_Init(_rodDoot_Window_wImage* MainWindow);
-extern Uint8 _rodDoot_Init(_rodDoot_Window_wImage* MainWindow, Mix_Chunk** Sound);
-extern void _rodDoot_Close(_rodDoot_Window_wImage* MainWindow, Mix_Chunk** Sound);
+extern Uint8 _rodDoot_Init(_rodDoot_Window_wImage* MainWindow, _rodDoot_SoundAndDevice* SD);
+extern void _rodDoot_Close(_rodDoot_Window_wImage* MainWindow, _rodDoot_SoundAndDevice* SD);
 
 /* ThreadFuncs Functions */
 extern Uint8 _rodDoot_RandoPlaySound(void* not);
+
+/* Audio Function */
+extern void _rodDoot_AudioCallback(void* Userdata, Uint8* Stream, int StreamLength);
 
 #endif /* _RODDOOT_FUNCS_H */
